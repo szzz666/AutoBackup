@@ -58,7 +58,7 @@ token: null
 
 ### 3. cron表达式
 1. 使用cron表达式可以精确地指定每天、每周、每月、每年的备份时间。
-2. 可以使用[cron表达式生成器](https://cron.szzz666.top/)快速生成表达式。
+2. 可以使用[Cron表达式生成器](https://cron.szzz666.top/)快速生成表达式。
 
 ### 4. 启动AutoBackup
 1. 下载 [AutoBackup](https://github.com/szzz666/AutoBackup/releases/download/v1.0.0/AutoBackup.zip) 压缩包并解压。
