@@ -61,6 +61,7 @@ token: null
 2. 可以使用[cron表达式生成器](https://cron.szzz666.top/)快速生成表达式。
 
 ### 4. 启动AutoBackup
-1. Windows平台双击运行 `Start.bat`
-2. 安装 Java17 及以上版本运行环境。
-3. 运行 `java -jar AutoBackup-1.0-SNAPSHOT.jar`
+1. 下载 [AutoBackup](https://github.com/szzz666/AutoBackup/releases/download/v1.0.0/AutoBackup.zip) 压缩包并解压。
+2. Windows平台双击运行 `Start.bat`
+3. 安装 Java17 及以上版本运行环境。
+4. 运行 `java -jar AutoBackup-1.0-SNAPSHOT.jar`
