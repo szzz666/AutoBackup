@@ -319,8 +319,8 @@ public class BaiduPanManager {
                 logger.info("[百度网盘] 备份文件数量 ({}) 未超限，无需清理。", numBackups);
                 return;
             }
-            if (filePaths.size() >= 3) {
-                filePaths.subList(filePaths.size() - 3, filePaths.size()).clear();
+            if (filePaths.size() >= maxBackups) {
+                filePaths.subList(filePaths.size() - maxBackups, filePaths.size()).clear();
             }
             if (!filePaths.isEmpty()) {
                 // 执行批量删除
