@@ -1,6 +1,5 @@
 package top.szzz666.tools;
 
-import org.jetbrains.annotations.NotNull;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +42,16 @@ public class MyJob implements Job {
             if (config.getBoolean("云备份")) {
                 String localPath = target + "/" + zipFileName;
                 String remotePath = cloud + "/" + zipFileName;
-                uploadLargeFile(getAccessToken(), localPath, remotePath);
+                if (config.getBoolean("百度网盘"))
+                    BaiduPanManager.uploadLargeFile(getAccessToken(), localPath,
+                            "/apps/" + config.getString("百度应用名称") + remotePath);
+                if (config.getBoolean("123云盘"))
+                    Pan123Manager.uploadLargeFile(localPath, remotePath);
                 logger.info("云备份成功完成: {} -> {}", localPath, remotePath);
-                manageBackups(getAccessToken(), cloud, number);
+                if (config.getBoolean("百度网盘"))
+                    BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("百度应用名称") + cloud, number);
+                if (config.getBoolean("123云盘"))
+                    Pan123Manager.manageBackups(number);
                 logger.info("云备份清理完成，保留最新的{}个备份文件", number);
             }
         } catch (Exception e) {
@@ -56,26 +62,6 @@ public class MyJob implements Job {
                         e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         }
     }
-
-//    private String smartBackups(String path, String target) {
-//        String zipFileName;
-//        try {
-//            zipFileName = backupFolderToZip(path, target);
-//        } catch (IOException e) {
-//            try {
-//                logger.info("文件夹 {} 正在被其他程序占用，复制到临时文件夹再进行备份。", path);
-//                String copyPath = copyFolder(path, target);
-//                logger.info(copyPath);
-//                zipFileName = backupFolderToZip(copyPath, target);
-//                deleteFolder(copyPath);
-//                logger.info("临时文件夹 {} 已删除。", copyPath);
-//            } catch (IOException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        }
-//        return zipFileName;
-//    }
-
 
     public static String backupFolderToZip(String sourceFolderPath, String targetFolderPath) throws IOException {
         File sourceFolder = new File(sourceFolderPath);
@@ -143,25 +129,18 @@ public class MyJob implements Job {
     public static void sendEmail(String host, int port, final String userName, final String password, String toAddress,
                                  String subject, String message) {
         try {
-            // 设置邮件服务器属性
             Properties properties = new Properties();
             properties.put("mail.smtp.host", host);
             properties.put("mail.smtp.port", port);
             properties.put("mail.smtp.auth", "true");
             properties.put("mail.smtp.starttls.enable", "true");
-
-            // 创建一个会话与认证
             Authenticator auth = new Authenticator() {
                 public PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(userName, password);
                 }
             };
-
             Session session = Session.getInstance(properties, auth);
-
-            // 创建一个新的消息
             Message msg = new MimeMessage(session);
-
             msg.setFrom(new InternetAddress(userName));
             InternetAddress[] toAddresses = {new InternetAddress(toAddress)};
             msg.setRecipients(Message.RecipientType.TO, toAddresses);

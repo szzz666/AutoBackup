@@ -4,7 +4,7 @@
 1. 定时自动备份：用户可以设置每天、每周、每月、每年的备份时间。
 2. 自动压缩：备份文件会自动压缩成 zip 格式，名称为原文件夹名加上日期时间戳。
 3. 自动删除旧备份：用户可以通过配置文件设置保留的备份文件的数量。
-4. 云备份（百度网盘）：用户开启云备份后，AutoBackup 除了备份到本地，还会自动备份到百度网盘。
+4. 云备份：用户开启云备份后，AutoBackup 除了备份到本地，还会自动备份到已配置的云端存储。
 5. 文件占用：当检测到文件被占用（如 MC 服务端运行时），AutoBackup 会先将文件复制至临时目录再执行备份，无需停止服务。
 6. 日志记录：AutoBackup 会记录备份日志，方便用户查看备份情况。
 7. 多文件夹备份：用户可以配置多个文件夹进行备份，无需多开 AutoBackup。
@@ -13,20 +13,33 @@
 10. 多平台支持：AutoBackup 使用 Java 开发，支持 Windows、Linux、MacOS 等多平台。
 
 ## 使用教程
-### 1. 配置文件`config.yml`
+### 1. 修改配置`config.yml`
 ```yaml
 # 云备份配置
 云备份: true  # 是否启用云备份功能，true表示启用，false表示禁用
 
-# 百度云存储相关配置
+百度网盘: true # 启用百度网盘
+123云盘: true  # 启用123云盘
+
+
+# 百度网盘相关配置
 百度SecretKey: Snp2sQwRnSFaayGkZiAjmJu07RGAN5qi  # 在百度开放平台申请的SecretKey，用于身份验证
 百度AppKey: ldojhtCoZ3Y966ti9bpPcKECiPNJIRbq      # 在百度开放平台申请的AppKey，与应用关联的标识
+#应用名称，网盘只能拥有一个文件夹用于存储上传文件，该文件夹必须位于/apps目录下，apps下的文件夹名称为申请接入时填写的申请接入的产品名称。
+#软件类型应用路径是/apps/{appname}，网盘内展示为/我的应用数据/{appname}；硬件类型应用是/我的硬件数据/{appname}。
+#如申请接入的产品名称为云存储，那么该文件夹为/apps/云存储，用户看到的文件夹为/我的应用数据/云存储。
+#AutoBackup会根据cloud参数自动拼接出目标文件夹路径，如cloud参数为/server_backups，则目标文件夹路径为/apps/云存储/server_backups。
+百度应用名称: 云存储
+
+# 123云盘相关配置
+123云盘ClientID: 97e4ccd53ec24f1ebb56953f23ecd059  # 在123云盘开放平台申请的ClientID
+123云盘ClientSecret: 5e9904d2cb4e4af18dedc2696360e2e4  # 在123云盘开放平台申请的ClientSecret
 
 # 备份任务列表
 备份任务:
   # 第一个备份任务配置
   - 
-    cloud: '/apps/存储/server_backups'  # 云备份目标文件夹路径，未开启云备份时，此项无效
+    cloud: '/server_backups'  # 云备份目标文件夹路径，未开启云备份时，此项无效
     path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹'  # 本地需要备份的源文件夹路径
     number: 3  # 保留的备份文件数量，超过此数量的旧备份将被删除
     corn: '0 * * * * ?'  # 定时备份的cron表达式，这里表示每分钟的第0秒执行一次备份
@@ -53,14 +66,19 @@ token: null
 ```
 ### 2. 获取百度开放平台凭证
 1.  访问 [百度网盘开放平台](https://pan.baidu.com/union/console) 并登录。
-2.  完成开发者认证，然后创建一个“个人应用-存储”类型的应用。
-3.  在应用详情页，记下您的 **`AppKey`** 和 **`SecretKey`**。
+2.  完成开发者认证，然后在“控制台-我的应用-创建”创建您的应用，无需申请上线审核。
+3.  在应用详情页，记下您的 **`AppKey`** 和 **`SecretKey`** 还有 **`应用名称`**。
 
-### 3. Cron表达式
+### 3. 申请入驻成为123云盘开发者
+1. 访问 [123云盘开放平台](https://cloud.123pan.com/open/developer) 并登录。
+2. 填写相关信息，提交申请。
+3. 等待审核通过，查看绑定邮箱，记下您的 **`ClientID`** 和 **`ClientSecret`** 。
+
+### 4. Cron表达式
 1. 使用Cron表达式可以精确地指定每天、每周、每月、每年的备份时间。
 2. 可以使用[Cron表达式生成器](https://cron.szzz666.top/)快速生成表达式。
 
-### 4. 启动AutoBackup
+### 5. 启动AutoBackup
 1. 下载 [AutoBackup](https://github.com/szzz666/AutoBackup/releases/download/v1.0.0/AutoBackup.zip) 压缩包并解压。
 2. Windows平台双击运行 `Start.bat`
 3. 安装 Java17 及以上版本运行环境。

@@ -4,7 +4,6 @@ import com.google.gson.*;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import top.szzz666.Main;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -14,7 +13,6 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import static top.szzz666.Main.config;
 
@@ -29,17 +27,12 @@ public class BaiduPanManager {
     private static final int CHUNK_SIZE = 4 * 1024 * 1024;
 
 
-    private static final OkHttpClient httpClient = new OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build();
-
-    private static final Gson gson = new Gson();
+    public static final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    public static final Gson gson = new Gson();
 
 
     public static String getAccessToken() throws Exception {
-        HashMap<String, Object> tokenData = config.get("token");
+        HashMap<String, Object> tokenData = config.get("baidu_token");
         if (tokenData != null) {
             long expiresAt = Long.parseLong(tokenData.get("expires_in").toString());
             if (System.currentTimeMillis() / 1000 < expiresAt) {
@@ -68,7 +61,7 @@ public class BaiduPanManager {
                                 return refreshTokenData1.get("access_token").getAsString();
                             }
                             logger.error("[百度网盘] 刷新 access_token 失败，正在重试第 {} 次...", i + 1);
-                            Thread.sleep(1000);
+                            Thread.sleep(3000);
                         }
                     }
                 }
@@ -85,7 +78,7 @@ public class BaiduPanManager {
         token.put("access_token", accessToken);
         token.put("refresh_token", refresh_token);
         token.put("expires_in", System.currentTimeMillis() / 1000 + expires_in - 300);
-        config.set("token", token);
+        config.set("baidu_token", token);
         logger.info("[百度网盘] 保存 access_token 成功。");
     }
 
@@ -122,31 +115,6 @@ public class BaiduPanManager {
         return getAccessToken();
     }
 
-
-//    private static JsonObject makeApiRequest2(String url, Object params) throws IOException {
-//        Request.Builder requestBuilder = new Request.Builder().url(url);
-//        if (params != null) {
-//            String json = gson.toJson(params);
-//            RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
-//            requestBuilder.post(body);
-//        } else {
-//            requestBuilder.get();
-//        }
-//
-//        Request request = requestBuilder.build();
-//        try (Response response = httpClient.newCall(request).execute()) {
-//            if (!response.isSuccessful()) {
-//                logger.error("意外代码 {}", response);
-//            }
-//            String responseBody = null;
-//            if (response.body() != null) {
-//                responseBody = response.body().string();
-//            }
-//            logger.info(responseBody);
-//            return gson.fromJson(responseBody, JsonObject.class);
-//        }
-//    }
-
     private static JsonObject makeApiRequest(String url, String formData) throws IOException {
         Request request;
         if (formData == null) {
@@ -170,7 +138,7 @@ public class BaiduPanManager {
             if (response.body() != null) {
                 responseBody = response.body().string();
             }
-//            logger.info(responseBody);
+            logger.debug(responseBody);
             JsonObject jsonObject = gson.fromJson(responseBody, JsonObject.class);
             if (jsonObject.get("errno") != null && jsonObject.get("errno").getAsInt() > 0) {
                 logger.error("请求失败: {}", responseBody);
@@ -211,7 +179,7 @@ public class BaiduPanManager {
         JsonObject precreateResp = makeApiRequest(precreateUrl, formData);
         String uploadId = precreateResp.get("uploadid").getAsString();
         if (uploadId == null) throw new RuntimeException("预上传失败: " + precreateResp);
-        logger.info("[百度网盘] 预上传成功, UploadID: {}", uploadId);
+        logger.info("[百度网盘] 预上传成功");
 
         // ===== 分片上传阶段 =====
         logger.info("[百度网盘] 开始分片上传...");
@@ -333,7 +301,7 @@ public class BaiduPanManager {
                 }
                 logger.info("[百度网盘] 已成功删除旧的备份文件：");
                 for (String fileName : filePaths) {
-                    logger.info("  - {}", fileName);
+                    logger.info("  - {}", Path.of(fileName).getFileName());
                 }
             }
         } catch (Exception e) {
@@ -341,9 +309,33 @@ public class BaiduPanManager {
         }
     }
 
+    public static String getFileMD5(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists() || !file.isFile()) {
+            throw new IllegalArgumentException("文件不存在或不是有效文件: " + filePath);
+        }
+        try (FileInputStream fis = new FileInputStream(file)) {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[8192]; // 8KB缓冲区
+            int length;
+            while ((length = fis.read(buffer)) != -1) {
+                md.update(buffer, 0, length);
+            }
+            byte[] digest = md.digest();
 
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("MD5算法不可用", e);
+        } catch (IOException e) {
+            throw new RuntimeException("读取文件时出错: " + filePath, e);
+        }
+    }
     private static List<String> getBlockMd5List(String path, int passNum) throws IOException {
-        logger.info("[百度网盘] (第 {} 遍读取文件...)", passNum);
+        logger.info("(第 {} 遍读取文件...)", passNum);
         List<String> blockMd5List = new ArrayList<>();
         try (InputStream in = new FileInputStream(path)) {
             byte[] buffer = new byte[CHUNK_SIZE];
@@ -356,7 +348,7 @@ public class BaiduPanManager {
         return blockMd5List;
     }
 
-    private static String md5Bytes(byte[] data) {
+    public static String md5Bytes(byte[] data) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digest = md.digest(data);

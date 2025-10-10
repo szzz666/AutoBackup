@@ -100,7 +100,7 @@ public class FileUtil {
             try {
                 loadRecourseFromJarByFolder(folderPath, configPath, clazz);
             } catch (IOException e) {
-                logger.error("&c资源文件加载失败\n" + e.getMessage(), 2);
+                logger.error("资源文件加载失败{}", e.getMessage());
             }
         }
     }

@@ -9,12 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.szzz666.config.EasyConfig;
 import top.szzz666.config.MyConfig;
+import top.szzz666.tools.BaiduPanManager;
 import top.szzz666.tools.MyJob;
+import top.szzz666.tools.Pan123Manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static top.szzz666.tools.BaiduPanManager.getAccessToken;
 
 
 public class Main {
@@ -52,7 +53,10 @@ public class Main {
                 scheduler.scheduleJob(job, trigger);
                 logger.info("定时备份：{} 启动成功", task.get("path"));
                 if (config.get("云备份")) {
-                    getAccessToken();
+                    if (config.getBoolean("百度网盘"))
+                        BaiduPanManager.getAccessToken();
+                    if (config.getBoolean("123云盘"))
+                        Pan123Manager.getAccessToken();
                 }
             }
         } catch (Exception e) {
