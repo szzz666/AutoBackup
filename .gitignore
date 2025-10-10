@@ -40,3 +40,4 @@ build/
 config.yml
 out/
 logs/
+src/test

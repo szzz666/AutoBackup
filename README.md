@@ -62,7 +62,8 @@
 发送者password: epzsxxaattaccddh
 
 # 认证令牌（自动生成，无需修改）
-token: null
+baidu_token: null
+123pan_token: null
 ```
 ### 2. 获取百度开放平台凭证
 1.  访问 [百度网盘开放平台](https://pan.baidu.com/union/console) 并登录。
