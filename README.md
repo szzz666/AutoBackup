@@ -70,7 +70,7 @@ token: null
 3.  在应用详情页，记下您的 **`AppKey`** 和 **`SecretKey`** 还有 **`应用名称`**。
 
 ### 3. 申请入驻成为123云盘开发者
-1. 访问 [123云盘开放平台](https://cloud.123pan.com/open/developer) 并登录。
+1. 访问 [123云盘开放平台](https://www.123pan.cn/developer) 并登录。
 2. 填写相关信息，提交申请。
 3. 等待审核通过，查看绑定邮箱，记下您的 **`ClientID`** 和 **`ClientSecret`** 。
 
