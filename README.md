@@ -13,7 +13,7 @@
 10. 多平台支持：AutoBackup 使用 Java 开发，支持 Windows、Linux、MacOS 等多平台。
 
 ## 使用教程
-### 1. 修改配置`config.yml`
+### 1. 配置文件`config.yml`
 ```yaml
 # 云备份配置
 云备份: true  # 是否启用云备份功能，true表示启用，false表示禁用
@@ -37,15 +37,22 @@
 
 # 备份任务列表
 备份任务:
-  # 第一个备份任务配置
-  - 
-    cloud: '/server_backups'  # 云备份目标文件夹路径，未开启云备份时，此项无效
-    path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹'  # 本地需要备份的源文件夹路径
-    number: 3  # 保留的备份文件数量，超过此数量的旧备份将被删除
-    corn: '0 * * * * ?'  # 定时备份的cron表达式，这里表示每分钟的第0秒执行一次备份
+  - {
+    # 第一个备份任务配置
+    name: 'test' , # 备份任务名称
+    cloud: '/server_backups/test' , # 云备份目标文件夹路径，未开启云备份时，此项无效
+    path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹' , # 本地需要备份的源文件夹路径
+    number: 3 , # 保留的备份文件数量，超过此数量的旧备份将被删除
+    corn: '0 0 4 * * ?' , # 定时备份的cron表达式，这里表示每分钟的第0秒执行一次备份
     target: 'C:/Users/zhouy/File/kaiFa/测试备份/目标文件夹'  # 本地备份的目标文件夹路径
-    
+  }
 
+# 网络连接超时时间（单位：秒）
+connectTimeout: 30
+# 网络读取超时时间（单位：秒,上传大文件需要更长时间）
+writeTimeout: 60
+# 网络写入超时时间（单位：秒）
+readTimeout: 30
 # 是否启用备份失败通知（true表示启用，false表示禁用）
 备份失败通知: true
 # 接收通知邮件的邮箱地址
@@ -79,8 +86,8 @@ baidu_token: null
 1. 使用Cron表达式可以精确地指定每天、每周、每月、每年的备份时间。
 2. 可以使用[Cron表达式生成器](https://cron.szzz666.top/)快速生成表达式。
 
-### 5. 启动AutoBackup
+### 5. 测试运行
 1. 下载 [AutoBackup](https://github.com/szzz666/AutoBackup/releases/download/v1.0.0/AutoBackup.zip) 压缩包并解压。
-2. Windows平台双击运行 `Start.bat`
-3. 安装 Java17 及以上版本运行环境。
-4. 运行 `java -jar AutoBackup-1.0-SNAPSHOT.jar`
+2. 确保安装 Java17 及以上版本运行环境。
+3. Windows平台双击运行 `Start.bat`，其他平台执行 `java -jar AutoBackup-1.0-SNAPSHOT.jar`。
+4. 输入 `backup [任务名称]` , 如 `backup test` 测试备份。

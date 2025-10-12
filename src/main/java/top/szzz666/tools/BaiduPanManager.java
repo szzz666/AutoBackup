@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static top.szzz666.Main.config;
 
@@ -27,7 +28,11 @@ public class BaiduPanManager {
     private static final int CHUNK_SIZE = 4 * 1024 * 1024;
 
 
-    public static final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    public static final OkHttpClient httpClient = new OkHttpClient.Builder()
+            .connectTimeout(config.getInt("connectTimeout"), TimeUnit.SECONDS)
+            .writeTimeout(config.getInt("writeTimeout"), TimeUnit.SECONDS)
+            .readTimeout(config.getInt("readTimeout"), TimeUnit.SECONDS)
+            .build();
     public static final Gson gson = new Gson();
 
 
@@ -334,6 +339,7 @@ public class BaiduPanManager {
             throw new RuntimeException("读取文件时出错: " + filePath, e);
         }
     }
+
     private static List<String> getBlockMd5List(String path, int passNum) throws IOException {
         logger.info("(第 {} 遍读取文件...)", passNum);
         List<String> blockMd5List = new ArrayList<>();
