@@ -115,7 +115,6 @@ public class Pan123Manager {
         long fileSize = Files.size(path);
         logger.info("[123云盘] 文件大小: {} MB", fileSize / 1024.0 / 1024.0);
 
-
         // ===== 预上传阶段 =====
         logger.info("[123云盘] 正在进行预上传...");
         String precreateUrl = "https://open-api.123pan.com/upload/v2/file/create";
@@ -149,7 +148,7 @@ public class Pan123Manager {
             // ===== 分片上传阶段 =====
             logger.info("[123云盘] 开始分片上传...");
             for (int idx = 0; idx < totalParts; idx++) {
-                // 实际分片上传（已注释掉进度打印）
+                // 实际分片上传
                 uploadPart(preuploadID, idx, localPath, sliceSize, uploadUrl, accessToken);
             }
             logger.info("[123云盘] 所有分片上传完毕。");

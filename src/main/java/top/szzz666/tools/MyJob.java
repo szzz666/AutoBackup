@@ -30,10 +30,12 @@ public class MyJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
+        String name = jobExecutionContext.getJobDetail().getJobDataMap().getString("name");
         String path = jobExecutionContext.getJobDetail().getJobDataMap().getString("path");
         String target = jobExecutionContext.getJobDetail().getJobDataMap().getString("target");
         String cloud = jobExecutionContext.getJobDetail().getJobDataMap().getString("cloud");
         int number = jobExecutionContext.getJobDetail().getJobDataMap().getInt("number");
+        logger.info("开执行备份任务: {}", name);
         try {
             String zipFileName = backupFolderToZip(path, target);
             logger.info("备份成功完成: {} -> {}", path, target);

@@ -10,6 +10,7 @@ import static top.szzz666.Main.config;
 public class MyConfig {
     public static void loadConfig() {
         HashMap<String, Object> task = new HashMap<>();
+        task.put("name", "测试备份");
         task.put("path", "C:/Users/zhouy/File/kaiFa/测试备份/源文件夹");
         task.put("target", "C:/Users/zhouy/File/kaiFa/测试备份/目标文件夹");
         task.put("number", 3);
