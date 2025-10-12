@@ -17,11 +17,8 @@
 ```yaml
 # 云备份配置
 云备份: true  # 是否启用云备份功能，true表示启用，false表示禁用
-
 百度网盘: true # 启用百度网盘
 123云盘: true  # 启用123云盘
-
-
 # 百度网盘相关配置
 百度SecretKey: Snp2sQwRnSFaayGkZiAjmJu07RGAN5qi  # 在百度开放平台申请的SecretKey，用于身份验证
 百度AppKey: ldojhtCoZ3Y966ti9bpPcKECiPNJIRbq      # 在百度开放平台申请的AppKey，与应用关联的标识
@@ -34,7 +31,6 @@
 # 123云盘相关配置
 123云盘ClientID: 97e4ccd53ec24f1ebb56953f23ecd059  # 在123云盘开放平台申请的ClientID
 123云盘ClientSecret: 5e9904d2cb4e4af18dedc2696360e2e4  # 在123云盘开放平台申请的ClientSecret
-
 # 备份任务列表
 备份任务:
   - {
@@ -43,10 +39,9 @@
     cloud: '/server_backups/test' , # 云备份目标文件夹路径，未开启云备份时，此项无效
     path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹' , # 本地需要备份的源文件夹路径
     number: 3 , # 保留的备份文件数量，超过此数量的旧备份将被删除
-    corn: '0 0 4 * * ?' , # 定时备份的cron表达式，这里表示每分钟的第0秒执行一次备份
+    corn: '0 0 4 * * ?' , # 定时备份的cron表达式，这里表示每天4点执行一次备份
     target: 'C:/Users/zhouy/File/kaiFa/测试备份/目标文件夹'  # 本地备份的目标文件夹路径
   }
-
 # 网络连接超时时间（单位：秒）
 connectTimeout: 30
 # 网络写入超时时间（单位：秒,上传大文件需要更长时间）
