@@ -16,7 +16,6 @@
 ### 1. 配置文件`config.yml`
 ```yaml
 # 云备份配置
-云备份: true  # 是否启用云备份功能，true表示启用，false表示禁用
 百度网盘: true # 启用百度网盘
 123云盘: true  # 启用123云盘
 # 百度网盘相关配置
@@ -33,15 +32,9 @@
 123云盘ClientSecret: 5e9904d2cb4e4af18dedc2696360e2e4  # 在123云盘开放平台申请的ClientSecret
 # 备份任务列表
 备份任务:
-  - {
-    # 第一个备份任务配置
-    name: 'test' , # 备份任务名称
-    cloud: '/server_backups/test' , # 云备份目标文件夹路径，未开启云备份时，此项无效
-    path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹' , # 本地需要备份的源文件夹路径
-    number: 3 , # 保留的备份文件数量，超过此数量的旧备份将被删除
-    corn: '0 0 4 * * ?' , # 定时备份的cron表达式，这里表示每天4点执行一次备份
-    target: 'C:/Users/zhouy/File/kaiFa/测试备份/目标文件夹'  # 本地备份的目标文件夹路径
-  }
+  - { name: "123pan_test" ,type: "123pan",path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '',number: 3,corn: '0 0 0 ? * 1' }
+  - { name: "baidu_pan_test" ,type: "baidu_pan",path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '',number: 3,corn: '0 0 0 ? * 1' }
+  - { name: "local_test" ,type: "local",path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '',number: 30,corn: '0 0 0 ? * 1' }
 # 网络连接超时时间（单位：秒）
 connectTimeout: 30
 # 网络写入超时时间（单位：秒,上传大文件需要更长时间）
