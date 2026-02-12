@@ -38,13 +38,13 @@ public class Main {
                 String target = (String) task.get("target");
                 int number = (int) task.get("number");
                 String corn = (String) task.get("corn");
-                String cloud = (String) task.get("cloud");
+                String type = (String) task.get("type");
                 JobDetail job = JobBuilder.newJob(MyJob.class)
                         .withIdentity(name, "group1")
                         .usingJobData("name", name)
                         .usingJobData("path", path)
                         .usingJobData("target", target)
-                        .usingJobData("cloud", cloud)
+                        .usingJobData("type", type)
                         .usingJobData("number", number)
                         .build();
                 CronTrigger trigger = TriggerBuilder.newTrigger()

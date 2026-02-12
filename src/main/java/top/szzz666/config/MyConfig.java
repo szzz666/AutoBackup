@@ -15,7 +15,7 @@ public class MyConfig {
         task.put("target", "C:/Users/zhouy/File/kaiFa/测试备份/目标文件夹");
         task.put("number", 3);
         task.put("corn", "0 0 4 * * ?");
-        task.put("cloud", "/server_backups/test");
+        task.put("type", "local");
         ArrayList<HashMap<String, Object>> tasks = new ArrayList<>();
         tasks.add(task);
 

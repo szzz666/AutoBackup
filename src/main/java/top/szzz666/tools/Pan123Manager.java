@@ -201,7 +201,7 @@ public class Pan123Manager {
                 }
                 int sliceNo = partIndex + 1;
                 RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("preuploadID", uploadId).addFormDataPart("sliceNo", String.valueOf(sliceNo)).addFormDataPart("sliceMD5", md5Bytes(chunkData)).addFormDataPart("slice", localPath, RequestBody.create(MediaType.parse("application/octet-stream"), chunkData)).build();
-                Request request = new Request.Builder().url(uploadUrl + "/upload/v2/file/slice").method("POST", body).addHeader("Authorization", "Bearer " + Pan123Manager.getAccessToken()).addHeader("Platform", "open_platform").build();
+                Request request = new Request.Builder().url(uploadUrl + "/upload/v2/file/slice").method("POST", body).addHeader("Authorization", "Bearer " + accessToken).addHeader("Platform", "open_platform").build();
                 // 执行上传
                 try (Response response = httpClient.newCall(request).execute()) {
 

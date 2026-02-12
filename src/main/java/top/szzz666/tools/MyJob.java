@@ -33,36 +33,84 @@ public class MyJob implements Job {
         String name = jobExecutionContext.getJobDetail().getJobDataMap().getString("name");
         String path = jobExecutionContext.getJobDetail().getJobDataMap().getString("path");
         String target = jobExecutionContext.getJobDetail().getJobDataMap().getString("target");
-        String cloud = jobExecutionContext.getJobDetail().getJobDataMap().getString("cloud");
+        String type = jobExecutionContext.getJobDetail().getJobDataMap().getString("type");
         int number = jobExecutionContext.getJobDetail().getJobDataMap().getInt("number");
         logger.info("开执行备份任务: {}", name);
         try {
-            String zipFileName = backupFolderToZip(path, target);
-            logger.info("备份成功完成: {} -> {}", path, target);
-            cleanOldBackups(target, number);
-            logger.info("清理完成，保留最新的{}个备份文件", number);
-            if (config.getBoolean("云备份")) {
-                String localPath = target + "/" + zipFileName;
-                String remotePath = cloud + "/" + zipFileName;
-                if (config.getBoolean("百度网盘"))
-                    BaiduPanManager.uploadLargeFile(getAccessToken(), localPath,
-                            "/apps/" + config.getString("百度应用名称") + remotePath);
-                if (config.getBoolean("123云盘"))
-                    Pan123Manager.uploadLargeFile(localPath, remotePath);
-                logger.info("云备份成功完成: {} -> {}", localPath, remotePath);
-                if (config.getBoolean("百度网盘"))
-                    BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("百度应用名称") + cloud, number);
-                if (config.getBoolean("123云盘"))
-                    Pan123Manager.manageBackups(number);
-                logger.info("云备份清理完成，保留最新的{}个备份文件", number);
+            switch (type) {
+                case "local": {
+                    backupFolderToZip(path, target);
+                    logger.info("备份成功完成: {} -> {}", path, target);
+                    cleanOldBackups(target, number);
+                    logger.info("清理完成，保留最新的{}个备份文件", number);
+                    break;
+                }
+                case "baidu_pan": {
+                    if (config.get("云备份")) {
+                        if (config.getBoolean("百度网盘")) {
+                            String temp_path = "/baidu_temp";
+                            String zipFileName = backupFolderToZip(path, temp_path);
+                            String temp_file_path = temp_path + "/" + zipFileName;
+//                            String cloud_file_path = target + "/" + zipFileName;
+                            BaiduPanManager.uploadLargeFile(getAccessToken(), temp_file_path, "/apps/" + config.getString("百度应用名称") + "/" + zipFileName);
+                            BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("百度应用名称") + target, number);
+                            File fileToDelete = new File(temp_file_path);
+                            fileToDelete.delete();
+                            break;
+                        }
+                    }
+
+                }
+                case "123pan": {
+                    if (config.get("云备份")) {
+                        if (config.getBoolean("123云盘")) {
+                            String temp_path = "/123temp";
+                            String zipFileName = backupFolderToZip(path, temp_path);
+                            String temp_file_path = temp_path + "/" + zipFileName;
+                            String cloud_file_path = target + "/" + zipFileName;
+                            Pan123Manager.uploadLargeFile(temp_file_path, cloud_file_path);
+                            Pan123Manager.manageBackups(number);
+                            File fileToDelete = new File(temp_file_path);
+                            fileToDelete.delete();
+                            break;
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
             logger.error("备份或清理过程中出错", e);
             if (config.getBoolean("备份失败通知"))
-                sendEmail(config.get("邮件服务器host"), config.get("邮件服务器port"), config.get("发送者username"),
-                        config.get("发送者password"), config.get("邮件接收人"), config.get("邮件标题"),
-                        e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+                sendEmail(config.get("邮件服务器host"), config.get("邮件服务器port"), config.get("发送者username"), config.get("发送者password"), config.get("邮件接收人"), config.get("邮件标题"), e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         }
+
+
+//        try {
+//            String zipFileName = backupFolderToZip(path, target);
+//            logger.info("备份成功完成: {} -> {}", path, target);
+//            cleanOldBackups(target, number);
+//            logger.info("清理完成，保留最新的{}个备份文件", number);
+//            if (config.getBoolean("云备份")) {
+//                String localPath = target + "/" + zipFileName;
+//                String remotePath = cloud + "/" + zipFileName;
+//                if (config.getBoolean("百度网盘"))
+//                    BaiduPanManager.uploadLargeFile(getAccessToken(), localPath,
+//                            "/apps/" + config.getString("百度应用名称") + remotePath);
+//                if (config.getBoolean("123云盘"))
+//                    Pan123Manager.uploadLargeFile(localPath, remotePath);
+//                logger.info("云备份成功完成: {} -> {}", localPath, remotePath);
+//                if (config.getBoolean("百度网盘"))
+//                    BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("百度应用名称") + cloud, number);
+//                if (config.getBoolean("123云盘"))
+//                    Pan123Manager.manageBackups(number);
+//                logger.info("云备份清理完成，保留最新的{}个备份文件", number);
+//            }
+//        } catch (Exception e) {
+//            logger.error("备份或清理过程中出错", e);
+//            if (config.getBoolean("备份失败通知"))
+//                sendEmail(config.get("邮件服务器host"), config.get("邮件服务器port"), config.get("发送者username"),
+//                        config.get("发送者password"), config.get("邮件接收人"), config.get("邮件标题"),
+//                        e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+//        }
     }
 
     public static String backupFolderToZip(String sourceFolderPath, String targetFolderPath) throws IOException {
@@ -77,8 +125,7 @@ public class MyJob implements Job {
         // 使用源文件夹名作为ZIP文件名
         String zipFileName = sourceFolder.getName() + "_AutoBackup_" + getTimeStr() + ".zip";
         File zipFile = new File(targetFolder, zipFileName);
-        try (FileOutputStream fos = new FileOutputStream(zipFile);
-             ZipOutputStream zos = new ZipOutputStream(fos)) {
+        try (FileOutputStream fos = new FileOutputStream(zipFile); ZipOutputStream zos = new ZipOutputStream(fos)) {
             zipFolder(sourceFolder, sourceFolder, zos);
         } catch (IOException e) {
             deleteFolder(zipFile.getAbsolutePath());
@@ -128,8 +175,7 @@ public class MyJob implements Job {
         return sdf.format(date);
     }
 
-    public static void sendEmail(String host, int port, final String userName, final String password, String toAddress,
-                                 String subject, String message) {
+    public static void sendEmail(String host, int port, final String userName, final String password, String toAddress, String subject, String message) {
         try {
             Properties properties = new Properties();
             properties.put("mail.smtp.host", host);
