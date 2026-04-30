@@ -101,7 +101,7 @@ public class MyJob implements Job {
             Files.createDirectories(targetPath);
         }
         // 使用源文件夹名作为ZIP文件名
-        String zipFileName = sourcePath.getFileName() + "_AutoBackup_" + getTimeStr() + ".zip";
+        String zipFileName = sourcePath.getFileName().toString() + "_" + getTimeStr() + ".zip";
         Path zipFilePath = targetPath.resolve(zipFileName);
         try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zipFilePath))) {
             zipFolder(sourcePath.toFile(), sourcePath.toFile(), zos);
@@ -158,7 +158,7 @@ public class MyJob implements Job {
     }
 
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
     private static String getTimeStr() {
         return LocalDateTime.now().format(DATE_TIME_FORMATTER);
