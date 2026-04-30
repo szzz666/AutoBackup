@@ -20,8 +20,8 @@ import static top.szzz666.Main.config;
 
 public class BaiduPanManager {
     private static final Logger logger = LoggerFactory.getLogger(BaiduPanManager.class);
-    private static final String APP_KEY = config.getString("百度AppKey");
-    private static final String SECRET_KEY = config.getString("百度SecretKey");
+    private static final String APP_KEY = config.getString("baiduAppKey");
+    private static final String SECRET_KEY = config.getString("baiduSecretKey");
 
     // 全局常量配置
     private static final String REDIRECT_URI = "oob";
@@ -37,7 +37,8 @@ public class BaiduPanManager {
 
 
     public static String getAccessToken() throws Exception {
-        HashMap<String, Object> tokenData = config.get("baidu_token");
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> tokenData = (HashMap<String, Object>) config.get("baiduToken");
         if (tokenData != null) {
             long expiresAt = Long.parseLong(tokenData.get("expires_in").toString());
             if (System.currentTimeMillis() / 1000 < expiresAt) {
@@ -83,7 +84,7 @@ public class BaiduPanManager {
         token.put("access_token", accessToken);
         token.put("refresh_token", refresh_token);
         token.put("expires_in", System.currentTimeMillis() / 1000 + expires_in - 300);
-        config.set("baidu_token", token);
+        config.set("baiduToken", token);
         logger.info("[百度网盘] 保存 access_token 成功。");
     }
 

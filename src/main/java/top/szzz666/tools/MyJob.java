@@ -46,14 +46,14 @@ public class MyJob implements Job {
                     break;
                 }
                 case "baidu_pan": {
-                    if (config.get("云备份")) {
-                        if (config.getBoolean("百度网盘")) {
+                    if (config.getBoolean("cloudBackup")) {
+                        if (config.getBoolean("baiduPan")) {
                             String temp_path = "/baidu_temp";
                             String zipFileName = backupFolderToZip(path, temp_path);
                             String temp_file_path = temp_path + "/" + zipFileName;
 //                            String cloud_file_path = target + "/" + zipFileName;
-                            BaiduPanManager.uploadLargeFile(getAccessToken(), temp_file_path, "/apps/" + config.getString("百度应用名称") + target + "/" + zipFileName);
-                            BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("百度应用名称") + target, number);
+                            BaiduPanManager.uploadLargeFile(getAccessToken(), temp_file_path, "/apps/" + config.getString("baiduAppName") + target + "/" + zipFileName);
+                            BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("baiduAppName") + target, number);
                             File fileToDelete = new File(temp_file_path);
                             fileToDelete.delete();
                             break;
@@ -62,8 +62,8 @@ public class MyJob implements Job {
 
                 }
                 case "123pan": {
-                    if (config.get("云备份")) {
-                        if (config.getBoolean("123云盘")) {
+                    if (config.getBoolean("cloudBackup")) {
+                        if (config.getBoolean("pan123")) {
                             String temp_path = "/123temp";
                             String zipFileName = backupFolderToZip(path, temp_path);
                             String temp_file_path = temp_path + "/" + zipFileName;
@@ -79,8 +79,8 @@ public class MyJob implements Job {
             }
         } catch (Exception e) {
             logger.error("备份或清理过程中出错", e);
-            if (config.getBoolean("备份失败通知"))
-                sendEmail(config.get("邮件服务器host"), config.get("邮件服务器port"), config.get("发送者username"), config.get("发送者password"), config.get("邮件接收人"), config.get("邮件标题"), e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+            if (config.getBoolean("backupFailNotify"))
+                sendEmail(config.getString("mailServerHost"), config.getInt("mailServerPort"), config.getString("senderUsername"), config.getString("senderPassword"), config.getString("mailRecipient"), config.getString("mailSubject"), e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         }
 
 

@@ -14,6 +14,7 @@ import top.szzz666.tools.Pan123Manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -31,7 +32,8 @@ public class Main {
             scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
             logger.info("定时备份调度器启动成功");
-            ArrayList<HashMap<String, Object>> tasks = new ArrayList<>(config.get("备份任务"));
+            @SuppressWarnings("unchecked")
+            ArrayList<HashMap<String, Object>> tasks = new ArrayList<>((List<HashMap<String, Object>>) config.get("backupTasks"));
             for (HashMap<String, Object> task : tasks) {
                 String name = (String) task.get("name");
                 String path = (String) task.get("path");
@@ -59,10 +61,10 @@ public class Main {
             logger.error("启动定时任务失败", e);
         }
 
-        if (config.get("云备份")) {
-            if (config.getBoolean("百度网盘"))
+        if (config.getBoolean("cloudBackup")) {
+            if (config.getBoolean("baiduPan"))
                 BaiduPanManager.getAccessToken();
-            if (config.getBoolean("123云盘"))
+            if (config.getBoolean("pan123"))
                 Pan123Manager.getAccessToken();
         }
         // 命令
