@@ -15,54 +15,61 @@
 ## 使用教程
 ### 1. 配置文件`config.yml`
 ```yaml
+# 备份任务配置
+backup:
+  tasks:
+    - { name: "123pan_test", type: "123pan", path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '', number: 3, corn: '0 0 0 ? * 1' }
+    - { name: "baidu_pan_test", type: "baidu_pan", path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '', number: 3, corn: '0 0 0 ? * 1' }
+    - { name: "local_test", type: "local", path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '', number: 30, corn: '0 0 0 ? * 1' }
+
 # 云备份配置
-百度网盘: true # 启用百度网盘
-123云盘: true  # 启用123云盘
-# 百度网盘相关配置
-百度SecretKey: Snp2sQwRnSFaayGkZiAjmJu07RGAN5qi  # 在百度开放平台申请的SecretKey，用于身份验证
-百度AppKey: ldojhtCoZ3Y966ti9bpPcKECiPNJIRbq      # 在百度开放平台申请的AppKey，与应用关联的标识
-#应用名称，网盘只能拥有一个文件夹用于存储上传文件，该文件夹必须位于/apps目录下，apps下的文件夹名称为申请接入时填写的申请接入的产品名称。
-#软件类型应用路径是/apps/{appname}，网盘内展示为/我的应用数据/{appname}；硬件类型应用是/我的硬件数据/{appname}。
-#如申请接入的产品名称为云存储，那么该文件夹为/apps/云存储，用户看到的文件夹为/我的应用数据/云存储。
-#AutoBackup会根据cloud参数自动拼接出目标文件夹路径，如cloud参数为/server_backups，则目标文件夹路径为/apps/云存储/server_backups。
-百度应用名称: 云存储
+cloud:
+  enabled: true  # 是否启用云备份
+  # 百度网盘相关配置
+  baidu:
+    enabled: true  # 是否启用百度网盘
+    # 在百度开放平台申请的AppKey，与应用关联的标识
+    appKey: ldojhtCoZ3Y966ti9bpPcKECiPNJIRbq
+    # 在百度开放平台申请的SecretKey，用于身份验证
+    secretKey: Snp2sQwRnSFaayGkZiAjmJu07RGAN5qi
+    #应用名称，网盘只能拥有一个文件夹用于存储上传文件，该文件夹必须位于/apps目录下，apps下的文件夹名称为申请接入时填写的申请接入的产品名称。
+    #软件类型应用路径是/apps/{appname}，网盘内展示为/我的应用数据/{appname}；硬件类型应用是/我的硬件数据/{appname}。
+    #如申请接入的产品名称为云存储，那么该文件夹为/apps/云存储，用户看到的文件夹为/我的应用数据/云存储。
+    #AutoBackup会根据cloud参数自动拼接出目标文件夹路径，如cloud参数为/server_backups，则目标文件夹路径为/apps/云存储/server_backups。
+    appName: 云存储
+    # 认证令牌（自动生成，无需修改）
+    token: null
+  # 123云盘相关配置
+  pan123:
+    enabled: true  # 是否启用123云盘
+    # 在123云盘开放平台申请的ClientID
+    clientId: 97e4ccd53ec24f1ebb56953f23ecd059
+    # 在123云盘开放平台申请的ClientSecret
+    clientSecret: 5e9904d2cb4e4af18dedc2696360e2e4
+    # 认证令牌（自动生成，无需修改）
+    token: null
 
-# 123云盘相关配置
-123云盘ClientID: 97e4ccd53ec24f1ebb56953f23ecd059  # 在123云盘开放平台申请的ClientID
-123云盘ClientSecret: 5e9904d2cb4e4af18dedc2696360e2e4  # 在123云盘开放平台申请的ClientSecret
-# 备份任务列表
-备份任务:
-  - { name: "123pan_test" ,type: "123pan",path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '',number: 3,corn: '0 0 0 ? * 1' }
-  - { name: "baidu_pan_test" ,type: "baidu_pan",path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '',number: 3,corn: '0 0 0 ? * 1' }
-  - { name: "local_test" ,type: "local",path: 'C:/Users/zhouy/File/kaiFa/测试备份/源文件夹', target: '',number: 30,corn: '0 0 0 ? * 1' }
-# 网络连接超时时间（单位：秒）
-connectTimeout: 30
-# 网络写入超时时间（单位：秒,上传大文件需要更长时间）
-writeTimeout: 60
-# 网络读取超时时间（单位：秒）
-readTimeout: 30
-# 是否启用备份失败通知（true表示启用，false表示禁用）
-备份失败通知: true
-# 接收通知邮件的邮箱地址
-邮件接收人: 3214948198@qq.com
-# 邮件标题
-邮件标题: AutoBackup 备份失败！！！
-# 邮件服务器端口号（587是QQ邮箱的SSL/TLS端口）
-邮件服务器port: 587
-# 邮件服务器主机地址（QQ邮箱的SMTP服务器）
-邮件服务器host: smtp.qq.com
-# 发件人邮箱账号（需要与SMTP服务器匹配）
-发送者username: 123@qq.com
-# 发件人邮箱密码或授权码（QQ邮箱需要使用授权码而非登录密码）
-发送者password: epzsxxaattaccddh
+# 通知配置
+notify:
+  enabled: true  # 是否启用备份失败通知
+  mail:
+    recipient: 3214948198@qq.com  # 接收通知邮件的邮箱地址
+    subject: AutoBackup 备份失败！！！  # 邮件标题
+    host: smtp.qq.com  # 邮件服务器主机地址（QQ邮箱的SMTP服务器）
+    port: 587  # 邮件服务器端口号（587是QQ邮箱的SSL/TLS端口）
+    senderUsername: 123@qq.com  # 发件人邮箱账号（需要与SMTP服务器匹配）
+    senderPassword: epzsxxaattaccddh  # 发件人邮箱密码或授权码（QQ邮箱需要使用授权码而非登录密码）
 
-# 认证令牌（自动生成，无需修改）
-baidu_token: null
-123pan_token: null
+# 超时配置（单位：秒）
+timeout:
+  connect: 30  # 网络连接超时时间
+  write: 60  # 网络写入超时时间（上传大文件需要更长时间）
+  read: 30  # 网络读取超时时间
 ```
+
 ### 2. 获取百度开放平台凭证
 1.  访问 [百度网盘开放平台](https://pan.baidu.com/union/console) 并登录。
-2.  完成开发者认证，然后在“控制台-我的应用-创建”创建您的应用，无需申请上线审核。
+2.  完成开发者认证，然后在"控制台-我的应用-创建"创建您的应用，无需申请上线审核。
 3.  在应用详情页，记下您的 **`AppKey`** 和 **`SecretKey`** 还有 **`应用名称`**。
 
 ### 3. 申请入驻成为123云盘开发者
