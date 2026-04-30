@@ -52,7 +52,7 @@ public class MyJob implements Job {
                             String zipFileName = backupFolderToZip(path, temp_path);
                             String temp_file_path = temp_path + "/" + zipFileName;
 //                            String cloud_file_path = target + "/" + zipFileName;
-                            BaiduPanManager.uploadLargeFile(getAccessToken(), temp_file_path, "/apps/" + config.getString("百度应用名称") + "/" + zipFileName);
+                            BaiduPanManager.uploadLargeFile(getAccessToken(), temp_file_path, "/apps/" + config.getString("百度应用名称") + target + "/" + zipFileName);
                             BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("百度应用名称") + target, number);
                             File fileToDelete = new File(temp_file_path);
                             fileToDelete.delete();
