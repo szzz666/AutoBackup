@@ -67,14 +67,14 @@ public class MyConfig {
     public static String mailSenderPassword = "发送者password";
 
     // ==================== 超时配置 ====================
-    @ConfigItem(key = "timeout.connect", comment = "连接超时时间（毫秒）")
-    public static Integer connectTimeout = null;
+    @ConfigItem(key = "timeout.connect", comment = "连接超时时间（秒）")
+    public static Integer connectTimeout = 30;
 
-    @ConfigItem(key = "timeout.write", comment = "写入超时时间（毫秒）")
-    public static Integer writeTimeout = null;
+    @ConfigItem(key = "timeout.write", comment = "写入超时时间（秒）")
+    public static Integer writeTimeout = 60;
 
-    @ConfigItem(key = "timeout.read", comment = "读取超时时间（毫秒）")
-    public static Integer readTimeout = null;
+    @ConfigItem(key = "timeout.read", comment = "读取超时时间（秒）")
+    public static Integer readTimeout = 30;
 
     public static void loadConfig() {
         // 初始化默认备份任务
