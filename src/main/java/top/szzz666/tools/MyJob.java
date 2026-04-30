@@ -46,14 +46,14 @@ public class MyJob implements Job {
                     break;
                 }
                 case "baidu_pan": {
-                    if (config.getBoolean("cloudBackup")) {
-                        if (config.getBoolean("baiduPan")) {
+                    if (config.getBoolean("cloud.enabled")) {
+                        if (config.getBoolean("cloud.baidu.enabled")) {
                             String temp_path = "/baidu_temp";
                             String zipFileName = backupFolderToZip(path, temp_path);
                             String temp_file_path = temp_path + "/" + zipFileName;
 //                            String cloud_file_path = target + "/" + zipFileName;
-                            BaiduPanManager.uploadLargeFile(getAccessToken(), temp_file_path, "/apps/" + config.getString("baiduAppName") + target + "/" + zipFileName);
-                            BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("baiduAppName") + target, number);
+                            BaiduPanManager.uploadLargeFile(getAccessToken(), temp_file_path, "/apps/" + config.getString("cloud.baidu.appName") + target + "/" + zipFileName);
+                            BaiduPanManager.manageBackups(getAccessToken(), "/apps/" + config.getString("cloud.baidu.appName") + target, number);
                             File fileToDelete = new File(temp_file_path);
                             fileToDelete.delete();
                             break;
@@ -62,8 +62,8 @@ public class MyJob implements Job {
 
                 }
                 case "123pan": {
-                    if (config.getBoolean("cloudBackup")) {
-                        if (config.getBoolean("pan123")) {
+                    if (config.getBoolean("cloud.enabled")) {
+                        if (config.getBoolean("cloud.pan123.enabled")) {
                             String temp_path = "/123temp";
                             String zipFileName = backupFolderToZip(path, temp_path);
                             String temp_file_path = temp_path + "/" + zipFileName;
@@ -79,8 +79,8 @@ public class MyJob implements Job {
             }
         } catch (Exception e) {
             logger.error("备份或清理过程中出错", e);
-            if (config.getBoolean("backupFailNotify"))
-                sendEmail(config.getString("mailServerHost"), config.getInt("mailServerPort"), config.getString("senderUsername"), config.getString("senderPassword"), config.getString("mailRecipient"), config.getString("mailSubject"), e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+            if (config.getBoolean("notify.enabled"))
+                sendEmail(config.getString("notify.mail.host"), config.getInt("notify.mail.port"), config.getString("notify.mail.senderUsername"), config.getString("notify.mail.senderPassword"), config.getString("notify.mail.recipient"), config.getString("notify.mail.subject"), e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         }
 
 

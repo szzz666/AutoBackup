@@ -20,8 +20,8 @@ import static top.szzz666.Main.config;
 
 public class BaiduPanManager {
     private static final Logger logger = LoggerFactory.getLogger(BaiduPanManager.class);
-    private static final String APP_KEY = config.getString("baiduAppKey");
-    private static final String SECRET_KEY = config.getString("baiduSecretKey");
+    private static final String APP_KEY = config.getString("cloud.baidu.appKey");
+    private static final String SECRET_KEY = config.getString("cloud.baidu.secretKey");
 
     // 全局常量配置
     private static final String REDIRECT_URI = "oob";
@@ -29,16 +29,16 @@ public class BaiduPanManager {
 
 
     public static final OkHttpClient httpClient = new OkHttpClient.Builder()
-            .connectTimeout(config.getInt("connectTimeout"), TimeUnit.SECONDS)
-            .writeTimeout(config.getInt("writeTimeout"), TimeUnit.SECONDS)
-            .readTimeout(config.getInt("readTimeout"), TimeUnit.SECONDS)
+            .connectTimeout(config.getInt("timeout.connect"), TimeUnit.SECONDS)
+            .writeTimeout(config.getInt("timeout.write"), TimeUnit.SECONDS)
+            .readTimeout(config.getInt("timeout.read"), TimeUnit.SECONDS)
             .build();
     public static final Gson gson = new Gson();
 
 
     public static String getAccessToken() throws Exception {
         @SuppressWarnings("unchecked")
-        HashMap<String, Object> tokenData = (HashMap<String, Object>) config.get("baiduToken");
+        HashMap<String, Object> tokenData = (HashMap<String, Object>) config.get("cloud.baidu.token");
         if (tokenData != null) {
             long expiresAt = Long.parseLong(tokenData.get("expires_in").toString());
             if (System.currentTimeMillis() / 1000 < expiresAt) {
@@ -84,7 +84,7 @@ public class BaiduPanManager {
         token.put("access_token", accessToken);
         token.put("refresh_token", refresh_token);
         token.put("expires_in", System.currentTimeMillis() / 1000 + expires_in - 300);
-        config.set("baiduToken", token);
+        config.set("cloud.baidu.token", token);
         logger.info("[百度网盘] 保存 access_token 成功。");
     }
 

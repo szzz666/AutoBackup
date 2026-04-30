@@ -26,7 +26,7 @@ public class Pan123Manager {
 
     public static String getAccessToken() throws Exception {
         @SuppressWarnings("unchecked")
-        HashMap<String, Object> tokenData = (HashMap<String, Object>) config.get("pan123Token");
+        HashMap<String, Object> tokenData = (HashMap<String, Object>) config.get("cloud.pan123.token");
         try {
             if (tokenData != null) {
                 int expiresAt = Integer.parseInt(tokenData.get("expiredAt").toString());
@@ -49,14 +49,14 @@ public class Pan123Manager {
         HashMap<String, Object> token = new HashMap<>();
         token.put("accessToken", accessToken);
         token.put("expiredAt", convertIsoToTimestamp(expiredAt) - 300);
-        config.set("pan123Token", token);
+        config.set("cloud.pan123.token", token);
         logger.info("[123云盘] 保存 access_token 成功。");
     }
 
     private static String authorizeNewToken() throws Exception {
         String url = "https://open-api.123pan.com/api/v1/access_token";
         String formData = String.format("clientID=%s&clientSecret=%s",
-                config.getString("pan123ClientId"), config.getString("pan123ClientSecret"));
+                config.getString("cloud.pan123.clientId"), config.getString("cloud.pan123.clientSecret"));
         JsonObject data = makeApiRequest0(url, formData).get("data").getAsJsonObject();
         if (data.has("accessToken")) {
             logger.info("[123云盘] 授权成功，正在保存 access_token...");

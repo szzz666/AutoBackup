@@ -33,7 +33,7 @@ public class Main {
             scheduler.start();
             logger.info("定时备份调度器启动成功");
             @SuppressWarnings("unchecked")
-            ArrayList<HashMap<String, Object>> tasks = new ArrayList<>((List<HashMap<String, Object>>) config.get("backupTasks"));
+            ArrayList<HashMap<String, Object>> tasks = new ArrayList<>((List<HashMap<String, Object>>) config.get("backup.tasks"));
             for (HashMap<String, Object> task : tasks) {
                 String name = (String) task.get("name");
                 String path = (String) task.get("path");
@@ -61,10 +61,10 @@ public class Main {
             logger.error("启动定时任务失败", e);
         }
 
-        if (config.getBoolean("cloudBackup")) {
-            if (config.getBoolean("baiduPan"))
+        if (config.getBoolean("cloud.enabled")) {
+            if (config.getBoolean("cloud.baidu.enabled"))
                 BaiduPanManager.getAccessToken();
-            if (config.getBoolean("pan123"))
+            if (config.getBoolean("cloud.pan123.enabled"))
                 Pan123Manager.getAccessToken();
         }
         // 命令
